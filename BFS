@@ -1,0 +1,51 @@
+#include <stdio.h>
+#define MAX_SIZE 1000
+
+int queue[MAX_SIZE]; //큐
+int graph[MAX_SIZE][MAX_SIZE]; //연결된 노드를 확인하는 그래프 배열
+int visit[MAX_SIZE] = { 0 }; //이미 방문한 노드를 저장하는 배열
+
+void BFS(int node, int num) {
+	int front = 0, rear = 0;
+	int pop, i; //팝한 정점을 기억하는 변수; 반복문
+	
+	printf("%d ", node); //우선 루트 노드 출력
+	queue[0] = node; //큐에 노드 입력
+	rear++; //입력했으니 rear를 증가
+	visit[node] = 1;//확인했으니 visit을 1로 바꿈
+
+	while (front < rear) {
+		pop = queue[front]; //노드의 인접 노드를 확인했으니 팝해줌
+		front++; //인접 노드를 가리키기 위해 front를 증가
+		for (i = 1; i <= num; i++) {
+			if (graph[pop][i] == 1 && visit[i] == 0) { //팝한 노드와 인접한 노드가 존재하고, 그 그룹의 노드를 확인하지 않았으면
+				printf("%d ", i); //탐색한 노드 출력
+				queue[rear] = i; //큐에 노드 입력시킴
+				rear++; //다음 노드를 저장하기 위한 공간 생성
+				visit[i] = 1; //visit을 1로 바꿔서 다음 번에 연결된 다른 노드 ex) 1,2 혹은 2,1이더라도 탐색하지 않도록 함
+			}
+		}
+	}
+	return 0;
+}
+
+
+int main() {
+	int x, y;
+	int start, max, i;
+	int num_node;
+	printf("시작 노드의 값을 입력하시오: ");
+	scanf("%d", &start);
+	printf("노드의 총 개수를 입력하시오: ");
+	scanf("%d", &max);
+	printf("노드를 연결 지을 횟수를 입력하시오: ");
+	scanf("%d", &num_node);
+	for (i = 0; i < num_node; i++) {
+		printf("노드를 두개씩 연결지으시오[%d (총 %d개)]: ", i+1, num_node);
+		scanf("%d%d", &x, &y);
+		graph[x][y] = 1;
+		graph[y][x] = 1;
+	}
+	BFS(start, max);
+	return 0;
+}
