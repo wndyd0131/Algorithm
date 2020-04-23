@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define TRUE 1
+#define FALSE 0
+#define MAX_VERTICES 50
+#define MAX_STACK 50
+#define MAX_NUM 500
+
+//STACK
+int stack[MAX_STACK];
+int top = -1;
+
+void push(int data) {
+	if (top >= MAX_STACK - 1) {
+		printf("Stack is full\n");
+		return -1;
+	}
+	stack[++top] = data;
+}
+
+int pop() {
+	if (top < 0) {
+		printf("Stack is empty\n");
+		return -1;
+	}
+	return stack[top--];
+}
+
+
+//GRAPH
+int visited[MAX_VERTICES] = {FALSE, };
+
+typedef struct graph {
+	int n;
+	int adj[MAX_VERTICES][MAX_VERTICES];
+}GRAPH;
+
+void init_graph(GRAPH *g) {
+	int x, y;
+	g->n = 0;
+	for (x = 0; x < MAX_VERTICES; x++) {
+		for (y = 0; y < MAX_VERTICES; y++) {
+			g->adj[x][y] = 0; //[x][y] = {0, }이 안됨
+		}
+	}
+}
+
+void insert_edge(GRAPH *g, int start, int end) {
+	g->adj[start][end] = 1;
+	g->adj[end][start] = 1;
+}
+
+void DFS(GRAPH *g, int vertex) {
+	int w;
+	push(vertex);
+	while (top >= 0) {
+		vertex = pop();
+		if (!visited[vertex]) {
+			printf("%d ", vertex);
+			visited[vertex] = TRUE;
+			for (w = 1; w < MAX_VERTICES; w++) {
+				if (g->adj[vertex][w] && !visited[w])
+					push(w);
+			}
+		}
+	}
+}
+	// 01, 54, 12, 56, 32, 26, 02, 25, 64, 03
+	int main() {
+		int num;
+		int start, end;
+		GRAPH *g = (GRAPH*)malloc(sizeof(GRAPH));
+		init_graph(g);
+		printf("How many times do you want to connect the vertices?");
+		scanf("%d", &num);
+		g->n = num;
+
+		for (int i = 0; i < num; i++) {
+			printf("Type two numbers for each vertex for connection: ");
+			scanf("%d %d", &start, &end);
+			insert_edge(g, start, end);
+		}
+		DFS(g, 0);
+
+
+		return 0;
+	}
